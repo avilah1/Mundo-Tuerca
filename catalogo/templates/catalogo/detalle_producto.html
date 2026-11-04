@@ -34,6 +34,21 @@
                     <p>{{ producto.caracteristicas|linebreaksbr }}</p>
                 </div>
             </div>
+
+            <div class="card-body p-4">
+                <div class="producto-detail-actions">
+                    <a href="{% url 'catalogo:editar' id=producto.id %}" class="btn btn-primary">
+                        Editar
+                    </a>
+
+                    <form method="post" action="{% url 'catalogo:eliminar' id=producto.id %}" class="producto-detail-delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </article>
 </section>

@@ -1,0 +1,28 @@
+{% extends "plantilla.html" %}
+
+{% block titulo %}
+    Página no encontrada
+{% endblock %}
+
+{% block contenido %}
+<section class="not-found-page">
+    <div class="container">
+        <div class="not-found-card">
+            <div class="not-found-badge">404</div>
+            <h1>Página no encontrada</h1>
+            <p>
+                La página que buscas no existe o fue movida.
+                Vuelve al catálogo para seguir navegando.
+            </p>
+            <div class="not-found-actions">
+                <a href="{% url 'catalogo:catalogo' %}" class="btn btn-primary px-4">
+                    Volver al inicio
+                </a>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">
+                    Regresar
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

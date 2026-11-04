@@ -597,29 +597,16 @@
     box-shadow: 0 1.5rem 4rem rgb(37 42 49 / 12%);
 }
 
-.login-welcome {
-    position: relative;
-    display: flex;
-    min-height: 34rem;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-    overflow: hidden;
-    padding: clamp(2rem, 5vw, 3.5rem);
-    background:
-        radial-gradient(ellipse at 80% 30%, rgb(244 197 66 / 16%), transparent 18rem),
-        #171a1f;
-    color: #fff;
-}
-
 .login-brand {
     position: absolute;
     top: 2.25rem;
     left: clamp(2rem, 5vw, 3.5rem);
+    z-index: 0;
     color: #f4c542;
     font-size: 1.5rem;
     font-weight: 800;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.02em;
+    opacity: 0.9;
 }
 
 .login-brand-caption {
@@ -632,25 +619,50 @@
     letter-spacing: 0.14em;
 }
 
+.login-welcome {
+    position: relative;
+    display: flex;
+    min-height: 34rem;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    background:
+        radial-gradient(ellipse at 80% 30%, rgb(244 197 66 / 16%), transparent 18rem),
+        #171a1f;
+    color: #fff;
+}
+
+.login-copy {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 16rem;
+    max-width: 24rem;
+}
+
 .login-wheel-mark {
     position: absolute;
-    top: 29%;
+    top: 15%;
     left: 50%;
+    z-index: 1;
     display: grid;
-    width: clamp(9rem, 19vw, 14rem);
+    width: clamp(7.5rem, 15vw, 12.5rem);
     aspect-ratio: 1;
     place-items: center;
-    border: 0.8rem solid #101215;
+    border: 0.7rem solid #101215;
     border-radius: 50%;
     background: repeating-conic-gradient(#454a50 0deg 5deg, #25292e 5deg 15deg);
-    box-shadow: 0 0 0 0.25rem #62676d, 0 1.5rem 3rem rgb(0 0 0 / 35%);
+    box-shadow: 0 0 0 0.2rem #62676d, 0 1rem 2.5rem rgb(0 0 0 / 35%);
     transform: translateX(-50%) rotate(-12deg);
 }
 
 .login-wheel-mark::before {
     position: absolute;
     inset: 22%;
-    border: 0.45rem solid #c8cbd0;
+    border: 0.38rem solid #c8cbd0;
     border-radius: 50%;
     background: repeating-conic-gradient(#aeb2b8 0deg 5deg, #e3e5e8 5deg 15deg);
     content: "";
@@ -668,7 +680,7 @@
 
 .login-eyebrow,
 .login-form-kicker {
-    margin-bottom: 0.65rem;
+    margin: 0;
     color: #a88620;
     font-size: 0.72rem;
     font-weight: 800;
@@ -678,20 +690,21 @@
 
 .login-eyebrow {
     color: #f4c542;
+    letter-spacing: 0.08em;
 }
 
 .login-welcome h1 {
+    margin: 0;
     max-width: 20rem;
-    margin-bottom: 0.85rem;
     font-size: clamp(1.8rem, 3vw, 2.5rem);
     font-weight: 800;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.04em;
     line-height: 1.05;
 }
 
 .login-welcome-copy {
+    margin: 0;
     max-width: 23rem;
-    margin-bottom: 0;
     color: #c3c6ca;
     line-height: 1.65;
 }
@@ -907,6 +920,60 @@
     cursor: pointer;
 }
 
+.formulario-producto input[name="imagen-clear"] {
+    display: inline-block;
+    width: auto;
+    min-height: auto;
+    margin: 0 0.5rem 0 0;
+    accent-color: #f4c542;
+    vertical-align: middle;
+}
+
+.formulario-producto label[for="imagen-clear_id"] {
+    display: inline-block;
+    margin: 0;
+    color: #4d535a;
+    font-size: 0.875rem;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.formulario-producto p a[href*="/media/"] {
+    color: #735900;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.formulario-producto p:has(input[name="imagen-clear"]) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid #edf0f3;
+    border-radius: 0.7rem;
+    background: #fafbfc;
+    color: #4d535a;
+    line-height: 1.5;
+}
+
+.formulario-producto p:has(input[name="imagen-clear"]) > label[for="id_imagen"] {
+    display: block;
+    width: 100%;
+    margin: 0 0 0.25rem;
+    color: #343a40;
+    font-size: 0.925rem;
+    font-weight: 650;
+}
+
+.formulario-producto p:has(input[name="imagen-clear"]) input[type="file"] {
+    display: block;
+    width: 100%;
+    margin-top: 0.2rem;
+}
+
 .formulario-producto input:focus,
 .formulario-producto select:focus,
 .formulario-producto textarea:focus {
@@ -932,12 +999,136 @@
     font-weight: 600;
 }
 
+.producto-detail-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.producto-detail-delete-form {
+    margin: 0;
+}
+
+.producto-detail-actions .btn {
+    min-height: 2.8rem;
+    border-radius: 0.65rem;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.producto-detail-actions .btn:hover,
+.producto-detail-actions .btn:focus {
+    transform: translateY(-1px);
+}
+
+.producto-detail-actions .btn-primary {
+    border-color: #f4c542;
+    background-color: #f4c542;
+    color: #252a31;
+}
+
+.producto-detail-actions .btn-primary:hover,
+.producto-detail-actions .btn-primary:focus {
+    border-color: #ffda70;
+    background-color: #ffda70;
+    color: #252a31;
+}
+
+.producto-detail-actions .btn-outline-danger {
+    border-color: #d85c5c;
+    color: #ae2d2d;
+    background-color: #fff;
+}
+
+.producto-detail-actions .btn-outline-danger:hover,
+.producto-detail-actions .btn-outline-danger:focus {
+    border-color: #c94d4d;
+    background-color: #fff1f1;
+    color: #9d2a2a;
+}
+
+.not-found-page {
+    display: grid;
+    min-height: calc(100vh - 5.5rem);
+    place-items: center;
+    padding: clamp(2rem, 6vw, 5rem) 1rem;
+    background:
+        radial-gradient(ellipse at 12% 10%, rgb(244 197 66 / 18%), transparent 24rem),
+        #f7f7f4;
+}
+
+.not-found-card {
+    max-width: 38rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4rem);
+    border: 1px solid #ecece8;
+    border-radius: 1.25rem;
+    background: #fff;
+    box-shadow: 0 1.5rem 4rem rgb(37 42 49 / 10%);
+    text-align: center;
+}
+
+.not-found-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 6rem;
+    margin-bottom: 1rem;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    background: #fff4c2;
+    color: #735900;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+}
+
+.not-found-card h1 {
+    margin-bottom: 1rem;
+    color: #252a31;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.06em;
+}
+
+.not-found-card p {
+    margin: 0 auto 2rem;
+    max-width: 28rem;
+    color: #606871;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.not-found-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.not-found-actions .btn {
+    min-height: 3rem;
+    border-radius: 0.7rem;
+    font-weight: 700;
+}
+
 @media (max-width: 575.98px) {
     .producto-form-card-header {
         padding: 1rem 1.25rem;
     }
 
     .producto-form-actions .btn {
+        width: 100%;
+    }
+
+    .not-found-actions {
+        flex-direction: column;
+    }
+
+    .not-found-actions .btn {
         width: 100%;
     }
 }
