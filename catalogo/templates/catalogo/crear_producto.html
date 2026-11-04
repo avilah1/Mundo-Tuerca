@@ -1,0 +1,47 @@
+{% extends "plantilla.html" %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+Crear producto
+{% endblock %}
+
+{% block contenido %}
+<section class="container py-4 py-lg-5">
+    <header class="producto-form-intro text-center mb-4 mb-lg-5">
+        <span class="badge rounded-pill mb-3">Nuevo producto</span>
+        <h1 class="display-6 fw-bold mb-2">Registrar un producto</h1>
+        <p class="text-body-secondary mb-0">
+            Completa la información y selecciona su categoría.
+        </p>
+    </header>
+
+    <div class="card producto-form-card border-0 mx-auto">
+        <div class="producto-form-card-header">
+            <div>
+                <h2 class="h5 fw-bold mb-1">Información del producto</h2>
+                <p class="small mb-0">Los campos del formulario se validarán al guardar.</p>
+            </div>
+            <span class="producto-form-mark" aria-hidden="true">01</span>
+        </div>
+        <div class="card-body p-4 p-lg-5">
+            <form class="formulario-producto" action="{% url 'catalogo:crear_producto' %}"
+                  method="post"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {{ formulario | crispy }}
+
+                <div class="producto-form-actions d-flex flex-column-reverse flex-sm-row justify-content-end gap-2 mt-4 pt-4">
+                    <a href="{% url 'catalogo:catalogo' %}"
+                       class="btn btn-outline-secondary px-4">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        Guardar producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

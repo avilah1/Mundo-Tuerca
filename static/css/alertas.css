@@ -1,0 +1,81 @@
+.rueda-alert-container.swal2-backdrop-show {
+    background: rgb(23 26 31 / 65%);
+    backdrop-filter: blur(4px);
+}
+
+.rueda-alert-popup {
+    width: min(28rem, calc(100vw - 2rem));
+    padding: 2rem 2rem 1.75rem;
+    border: 1px solid #ecece8;
+    border-radius: 1.1rem;
+    background: #fff;
+    box-shadow: 0 1.5rem 4rem rgb(23 26 31 / 25%);
+}
+
+.rueda-alert-popup .swal2-icon {
+    margin: 0 auto 1.25rem;
+}
+
+.rueda-alert-icon.swal2-success {
+    border-color: #d5a90c;
+    color: #735900;
+}
+
+.rueda-alert-icon.swal2-success .swal2-success-ring {
+    border-color: rgb(244 197 66 / 38%);
+}
+
+.rueda-alert-icon.swal2-success [class^="swal2-success-line"] {
+    background-color: #735900;
+}
+
+.rueda-alert-title {
+    margin-bottom: 0.5rem;
+    color: #252a31;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+}
+
+.rueda-alert-message {
+    margin: 0;
+    color: #626970;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.rueda-alert-confirm {
+    min-width: 8rem;
+    min-height: 2.9rem;
+    margin-top: 1.25rem;
+    padding: 0.7rem 1.4rem;
+    border: 1px solid #f4c542;
+    border-radius: 0.6rem;
+    background: #f4c542;
+    color: #252a31;
+    font-weight: 800;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.rueda-alert-confirm:hover {
+    transform: translateY(-1px);
+    border-color: #ffda70;
+    background: #ffda70;
+}
+
+.rueda-alert-confirm:focus-visible {
+    outline: 3px solid rgb(115 89 0 / 35%);
+    outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+    .rueda-alert-popup {
+        padding: 1.75rem 1.25rem 1.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rueda-alert-confirm {
+        transition: none;
+    }
+}
