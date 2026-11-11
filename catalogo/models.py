@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django_resized import ResizedImageField
 
 # Create your models here.
 class Categoria(models.Model):
@@ -15,7 +16,9 @@ class Producto(models.Model):
     descripcion = models.TextField()
     caracteristicas = models.TextField()
     precio = models.IntegerField()
-    imagen = models.ImageField(default='sin_imagen.jpg', blank=True)
+    #imagen = models.ImageField(default='sin_imagen.jpg', blank=True)
+    imagen = ResizedImageField(size=[900,900],quality=75, force_format="WEBP", keep_meta=False,
+                               upload_to="diario_mural/%Y/%m", default='sin_imagen.jpg', blank=True)
     slug = models.SlugField(max_length=100, unique=True)
 
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)

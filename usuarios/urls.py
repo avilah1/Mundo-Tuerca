@@ -4,5 +4,6 @@ from usuarios import views
 app_name = 'usuarios'
 urlpatterns = [
     path('login/', views.vista_login, name='login' ),
-    path('logout', views.vista_logout, name='logout')
+    path('registro/', views.registrar_usuario, name="registrar"),
+    path('logout', views.vista_logout, name='logout'),
 ]

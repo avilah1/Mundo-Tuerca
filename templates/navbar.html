@@ -38,6 +38,12 @@
                     </li>
 
                     {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-add ms-lg-2 px-3" href="{% url 'usuarios:registrar' %}">Crear Usuario</a>
+                            </li>
+                        {% endif %}
+
                     <li class="nav-item">
                         <a class="nav-link nav-link-add ms-lg-2 px-3" href="{% url 'usuarios:logout' %}">Cerrar
                             Sesión</a>
