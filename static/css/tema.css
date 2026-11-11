@@ -643,6 +643,10 @@
     max-width: 24rem;
 }
 
+.register-welcome .login-copy {
+    margin-top: 19rem;
+}
+
 .login-wheel-mark {
     position: absolute;
     top: 15%;

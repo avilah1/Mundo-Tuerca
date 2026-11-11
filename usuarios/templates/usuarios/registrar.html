@@ -1,12 +1,12 @@
 {% extends "plantilla.html" %}
 {% load crispy_forms_tags %}
 
-{% block titulo %}Iniciar sesión | Rueda{% endblock %}
+{% block titulo %}Crear cuenta | Mundo Tuerca{% endblock %}
 
 {% block contenido %}
 <section class="login-section">
     <div class="login-card">
-        <div class="login-welcome">
+        <div class="login-welcome register-welcome">
             <span class="login-brand">MUNDO TUERCA</span>
             <div class="login-wheel-mark" aria-hidden="true">
                 <span></span>
@@ -14,24 +14,24 @@
 
             <div class="login-copy">
                 <p class="login-eyebrow">Tu camino empieza aquí</p>
-                <h1>Qué bueno tenerte de vuelta.</h1>
+                <h1>Únete a Mundo Tuerca.</h1>
                 <p class="login-welcome-copy">
-                    Inicia sesión para seguir explorando llantas, neumáticos y accesorios.
+                    Crea tu cuenta y encuentra todo lo que necesitas para tu vehículo.
                 </p>
             </div>
         </div>
 
         <div class="login-form-panel">
             <div class="login-form-heading">
-                <span class="login-form-kicker">Bienvenido</span>
-                <h2>Crear Usuario</h2>
-                <p>Ingresa los datos para continuar.</p>
+                <span class="login-form-kicker">Regístrate</span>
+                <h2>Crear cuenta</h2>
+                <p>Completa tus datos para registrarte.</p>
             </div>
 
             <form action="{% url 'usuarios:registrar' %}" method="POST">
                 {% csrf_token %}
                 {{ formulario | crispy }}
-                <button type="submit" class="btn login-submit w-100">Crear Usuario</button>
+                <button type="submit" class="btn login-submit w-100">Crear cuenta</button>
             </form>
 
             <a class="login-back-link" href="{% url 'catalogo:catalogo' %}">
