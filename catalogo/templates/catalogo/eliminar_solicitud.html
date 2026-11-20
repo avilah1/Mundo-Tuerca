@@ -1,0 +1,18 @@
+{% extends "plantilla.html" %}
+
+{% block titulo %}Eliminar solicitud #{{ solicitud.id }} - Mundo Tuerca{% endblock %}
+
+{% block contenido %}
+<section class="container py-4">
+    <h1>Eliminar solicitud #{{ solicitud.id }}</h1>
+    <p><strong>Cliente:</strong> {{ solicitud.usuario.username }}</p>
+    <p><strong>Total:</strong> ${{ solicitud.costo_total|floatformat:"0g" }}</p>
+    <p>Si confirmas, la solicitud y sus detalles se eliminarán del historial del cliente.</p>
+
+    <form method="post" action="{% url 'catalogo:eliminar_solicitud' id=solicitud.id %}" class="d-flex flex-wrap gap-2">
+        {% csrf_token %}
+        <a href="{% url 'catalogo:ver_solicitud' id=solicitud.id %}" class="btn btn-outline-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    </form>
+</section>
+{% endblock %}

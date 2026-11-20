@@ -1,0 +1,28 @@
+<script>
+    async function confirmarEliminacion(event) {
+        event.preventDefault();
+
+        const formulario = event.currentTarget;
+        if (typeof Swal === 'undefined') {
+            if (window.confirm('¿Eliminar producto?')) {
+                formulario.submit();
+            }
+            return;
+        }
+
+        const resultado = await Swal.fire({
+            title: '¿Eliminar producto?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc3545',
+            focusCancel: true
+        });
+
+        if (resultado.isConfirmed) {
+            formulario.submit();
+        }
+    }
+</script>

@@ -1,0 +1,22 @@
+{% extends "plantilla.html" %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}Editar solicitud #{{ solicitud.id }} - Mundo Tuerca{% endblock %}
+
+{% block contenido %}
+<section class="container py-4">
+    <div class="col-lg-7">
+        <h1>Editar solicitud #{{ solicitud.id }}</h1>
+        <p>Ingresa entre 1 y {{ max_unidades }} unidades por producto. Puedes agregar un producto por vez.</p>
+        <p><strong>Total actual:</strong> ${{ solicitud.costo_total|floatformat:"0g" }}</p>
+        <form method="post" action="{% url 'catalogo:editar_solicitud' id=solicitud.id %}">
+            {% csrf_token %}
+            {{ formulario|crispy }}
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'catalogo:ver_solicitud' id=solicitud.id %}" class="btn btn-outline-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

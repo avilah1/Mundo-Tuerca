@@ -31,7 +31,7 @@
         async function mostrarMensajes() {
             {% for mensaje in messages %}
             await Swal.fire({
-                icon: "success",
+                icon: "{% if mensaje.level_tag == 'error' %}error{% else %}success{% endif %}",
                 title: "Aviso",
                 text: "{{ mensaje|escapejs }}",
                 confirmButtonText: "Aceptar",

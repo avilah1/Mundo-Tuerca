@@ -5,48 +5,123 @@ Catálogo de {{ categoria.nombre }}
 {% endblock %}
 
 {% block contenido %}
-<section class="container py-4 py-lg-5">
-    <header class="mb-4">
-        <h1 class="display-6 fw-bold mb-2">Catálogo de {{ categoria.nombre }}</h1>
-        <p class="text-body-secondary mb-0">Explora los productos disponibles y consulta sus características.</p>
+<section class="container py-4 py-lg-5 catalog-page">
+    <header class="solicitudes-heading catalog-heading">
+        <div>
+            <p class="solicitudes-eyebrow">Mundo Tuerca · Catálogo</p>
+            <h1>{{ categoria.nombre }}</h1>
+            <p class="solicitudes-description">Explora nuestra selección, compara sus características y encuentra lo que buscas.</p>
+        </div>
+        <span class="catalog-result-count">
+            <strong>{{ productos|length }}</strong>
+            <span>resultados</span>
+        </span>
     </header>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    <form method="get" class="catalog-filter-bar">
+        <div class="catalog-filter-copy">
+            <label for="estado">Filtrar por estado</label>
+            <p>Elige qué productos quieres ver.</p>
+        </div>
+        <div class="catalog-filter-controls">
+            <select name="estado" id="estado" class="form-select">
+                <option value="" {% if estado_seleccionado == '' %}selected{% endif %}>Todos</option>
+                <option value="1" {% if estado_seleccionado == '1' %}selected{% endif %}>Activos</option>
+                <option value="2" {% if estado_seleccionado == '2' %}selected{% endif %}>Inactivos</option>
+            </select>
+            <button type="submit" class="btn catalog-filter-button">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4 catalog-product-grid">
         {% for producto in productos %}
         <div class="col">
-            <article class="card h-100 shadow-sm">
-                <div class="bg-body-tertiary d-flex align-items-center justify-content-center p-3"
-                    style="height: 220px;">
+            <article class="card h-100 catalog-product-card">
+                <div class="catalog-product-media">
                     {% if producto.imagen %}
-                    <img src="{{ producto.imagen.url }}" class="img-fluid" alt="{{ producto.titulo }}"
-                        style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <img src="{{ producto.imagen.url }}" class="catalog-product-image" alt="{{ producto.titulo }}">
                     {% else %}
-                    <span class="text-body-secondary">Imagen no disponible</span>
+                    <div class="catalog-image-placeholder">
+                        <span aria-hidden="true">MT</span>
+                        <p>Imagen no disponible</p>
+                    </div>
+                    {% endif %}
+                    {% if producto.estado_id == 1 %}
+                    <span class="catalog-product-status catalog-product-status-active">Disponible</span>
+                    {% else %}
+                    <span class="catalog-product-status catalog-product-status-inactive">No disponible</span>
                     {% endif %}
                 </div>
 
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-start gap-2 mb-2">
-                        <span class="badge text-bg-secondary">{{ producto.id }}</span>
-                        <h2 class="card-title h5 mb-0">{{ producto.titulo }}</h2>
+                <div class="card-body catalog-product-body">
+                    <div class="catalog-product-meta">
+                        <span class="catalog-product-brand">{{ producto.marca }}</span>
+                        <span class="catalog-product-reference">#{{ producto.id }}</span>
+                    </div>
+                    <h2 class="catalog-product-title">{{ producto.titulo }}</h2>
+                    <p class="catalog-product-description">{{ producto.descripcion|truncatewords:18 }}</p>
+
+                    <div class="catalog-product-features">
+                        <span>Características</span>
+                        <p>{{ producto.caracteristicas|truncatewords:20|linebreaksbr }}</p>
                     </div>
 
-                    <p class="card-text text-body-secondary">{{ producto.descripcion |truncatewords:15 }}</p>
-                    <p class="fs-5 fw-bold mb-3">Precio: ${{ producto.precio }}</p>
+                    <div class="catalog-product-price">
+                        <span>Precio</span>
+                        <strong>${{ producto.precio|floatformat:"0g" }}</strong>
+                    </div>
 
-                    <p class="small mb-2"><strong>Marca:</strong> {{ producto.marca }}</p>
-                    <p class="small mb-4">{{ producto.caracteristicas|truncatewords:25|linebreaksbr }}</p>
+                    {% url 'catalogo:detalle_producto' slug=producto.slug as destino_compra %}
+                    <div class="catalog-product-actions">
+                        <a href="{{ destino_compra }}" class="btn catalog-detail-button">
+                            Ver detalle
+                        </a>
 
-                    <a href="{% url 'catalogo:detalle_producto' slug=producto.slug %}" class="btn btn-primary mt-auto">
-                        Ver detalle
-                    </a>
+                        {% if user.is_authenticated and producto.estado_id == 1 %}
+                        <form method="post"
+                              action="{% url 'catalogo:agregar_al_carrito' id=producto.id %}"
+                              class="catalog-add-form">
+                            {% csrf_token %}
+                            <label for="cantidad-{{ producto.id }}">Unidades</label>
+                            <div class="catalog-add-controls">
+                                <input type="number"
+                                       id="cantidad-{{ producto.id }}"
+                                       name="cantidad"
+                                       value="1"
+                                       min="1"
+                                       max="100"
+                                       step="1"
+                                       required
+                                       class="form-control">
+                                <button type="submit" class="btn catalog-add-button">
+                                    Agregar al carrito
+                                </button>
+                            </div>
+                        </form>
+                        {% elif producto.estado_id == 1 %}
+                        <a class="btn catalog-add-button"
+                           href="{% url 'usuarios:login' %}?next={{ destino_compra|urlencode:"" }}">
+                            Comprar
+                        </a>
+                        {% else %}
+                        <p class="catalog-product-unavailable">Este producto no está disponible para compra.</p>
+                        {% endif %}
+                    </div>
                 </div>
             </article>
         </div>
         {% empty %}
         <div class="col-12">
-            <div class="alert alert-light border mb-0" role="status">
-                No hay productos disponibles en este momento.
+            <div class="catalog-empty" role="status">
+                <span class="catalog-empty-mark" aria-hidden="true">MT</span>
+                <h2>No encontramos productos</h2>
+                <p>No hay productos que coincidan con este filtro.</p>
+                {% if estado_seleccionado %}
+                <a href="{% url 'catalogo:categoria' categoria_nombre=categoria.nombre %}"
+                   class="btn catalog-filter-button">
+                    Ver todos los productos
+                </a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

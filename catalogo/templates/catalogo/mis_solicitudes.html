@@ -1,0 +1,116 @@
+{% extends "plantilla.html" %}
+
+{% block titulo %}{% if es_gestion %}Gestionar solicitudes{% else %}Historial de compras{% endif %} - Mundo Tuerca{% endblock %}
+
+{% block contenido %}
+<section class="container py-4 py-lg-5 solicitudes-page">
+  <header class="solicitudes-heading">
+    <div>
+      <p class="solicitudes-eyebrow">{% if es_gestion %}Administración{% else %}Mi cuenta{% endif %}</p>
+      <h1>{% if es_gestion %}Solicitudes de compra{% else %}Historial de compras{% endif %}</h1>
+      <p class="solicitudes-description">
+        {% if es_gestion %}
+        Revisa las compras recibidas y actualiza las solicitudes pendientes.
+        {% else %}
+        Consulta el estado y los detalles de tus compras en Mundo Tuerca.
+        {% endif %}
+      </p>
+    </div>
+    {% if not es_gestion %}
+    <a href="{% url 'catalogo:catalogo' %}" class="btn solicitudes-catalog-link">
+      Seguir comprando
+      <span aria-hidden="true">&rarr;</span>
+    </a>
+    {% endif %}
+  </header>
+
+  <div class="solicitudes-panel">
+    <div class="solicitudes-panel-heading">
+      <div>
+        <h2>{% if es_gestion %}Todas las solicitudes{% else %}Tus compras{% endif %}</h2>
+        <p>Listado ordenado desde la compra más reciente</p>
+      </div>
+      <span class="solicitudes-count">{{ solicitudes|length }} registradas</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle solicitudes-table mb-0">
+        <thead>
+          <tr>
+            <th scope="col">Solicitud</th>
+            {% if es_gestion %}<th scope="col">Cliente</th>{% endif %}
+            <th scope="col">Fecha</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="text-end">Total</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for solicitud in solicitudes %}
+          <tr>
+            <th scope="row" class="solicitud-id">#{{ solicitud.id }}</th>
+            {% if es_gestion %}<td class="solicitud-client">{{ solicitud.usuario.username }}</td>{% endif %}
+            <td class="solicitud-date">{{ solicitud.fecha|date:"d/m/Y H:i" }}</td>
+            <td>
+              <span class="solicitud-status solicitud-status-{{ solicitud.estado }}">
+                {{ solicitud.get_estado_display }}
+              </span>
+            </td>
+            <td class="text-end solicitud-total">${{ solicitud.costo_total|floatformat:"0g" }}</td>
+            <td>
+              <div class="d-flex flex-wrap gap-2 solicitud-actions">
+                <a href="{% url 'catalogo:ver_solicitud' id=solicitud.id %}"
+                    class="btn btn-sm solicitud-action solicitud-action-detail">
+                  Ver detalle
+                </a>
+                {% if es_gestion and solicitud.estado == 'pendiente' %}
+                <a href="{% url 'catalogo:editar_solicitud' id=solicitud.id %}"
+                    class="btn btn-sm solicitud-action solicitud-action-edit">
+                  Editar
+                </a>
+                <form method="post" action="{% url 'catalogo:completar_solicitud' id=solicitud.id %}" class="m-0">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm solicitud-action solicitud-action-complete">
+                    Completar
+                  </button>
+                </form>
+                {% if user.is_superuser %}
+                <a href="{% url 'catalogo:eliminar_solicitud' id=solicitud.id %}"
+                    class="btn btn-sm solicitud-action solicitud-action-delete">
+                  Eliminar
+                </a>
+                {% endif %}
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="{% if es_gestion %}6{% else %}5{% endif %}" class="solicitudes-empty-cell">
+              <div class="solicitudes-empty">
+                <span class="solicitudes-empty-icon" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" focusable="false">
+                    <path d="M8 5.5h11l5 5v16H8z"></path>
+                    <path d="M19 5.5v5h5M12 16h8m-8 4h8"></path>
+                  </svg>
+                </span>
+                <strong>
+                  {% if es_gestion %}Aún no hay solicitudes{% else %}Aún no tienes compras{% endif %}
+                </strong>
+                <p>
+                  {% if es_gestion %}
+                  Cuando se registren compras, aparecerán aquí para su seguimiento.
+                  {% else %}
+                  Cuando realices una compra, podrás revisar aquí su estado y detalles.
+                  {% endif %}
+                </p>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

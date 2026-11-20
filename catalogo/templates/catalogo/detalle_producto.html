@@ -1,14 +1,20 @@
 {% extends "plantilla.html" %}
 
 {% block titulo %}
-    {{ producto.titulo }}
+{{ producto.titulo }}
 {% endblock %}
 
 {% block contenido %}
 <section class="container py-4 py-lg-5">
+    {% if origen %}
+    <a href="{{ origen }}" class="btn btn-outline-secondary mb-4">
+        &larr; Volver a gestionar productos
+    </a>
+    {% else %}
     <a href="{% url 'catalogo:categoria' producto.categoria.nombre %}" class="btn btn-outline-secondary mb-4">
         &larr; Volver al catálogo
     </a>
+    {% endif %}
 
     <article class="card border-0 shadow-sm mx-auto overflow-hidden" style="max-width: 1100px;">
         <div class="row g-0">
@@ -30,26 +36,60 @@
 
                     <p class="fs-3 fw-bold text-primary mb-4">Precio: ${{ producto.precio }}</p>
 
+                    {% if user.is_authenticated and producto.estado_id == 1 %}
+                    <form method="post" action="{% url 'catalogo:agregar_al_carrito' id=producto.id %}"
+                        class="d-flex flex-wrap align-items-center gap-2 mb-4">
+                        {% csrf_token %}
+
+                        <label for="cantidad">Cantidad</label>
+                        <input type="number" id="cantidad" name="cantidad" value="1" min="1" max="100" step="1" required
+                            class="form-control" style="width: 85px;">
+
+                        <button type="submit" class="btn btn-success">
+                            Agregar al carrito
+                        </button>
+                    </form>
+                    {% elif producto.estado_id == 1 %}
+                    {% url 'catalogo:detalle_producto' slug=producto.slug as destino_compra %}
+                    <a class="btn btn-success mb-2" href="{% url 'usuarios:login' %}?next={{ destino_compra|urlencode:"" }}">
+                        Comprar
+                    </a>
+                    <p class="text-body-secondary mb-4">Inicia sesión o crea una cuenta para continuar.</p>
+                    {% else %}
+                    <p class="text-body-secondary">Producto no disponible.</p>
+                    {% endif %}
+
                     <h2 class="h5 fw-semibold mb-3">Características</h2>
                     <p>{{ producto.caracteristicas|linebreaksbr }}</p>
                 </div>
             </div>
 
+            {% if user.is_staff or user.is_superuser %}
             <div class="card-body p-4">
                 <div class="producto-detail-actions">
-                    <a href="{% url 'catalogo:editar' id=producto.id %}" class="btn btn-primary">
+                    <a href="{% url 'catalogo:editar' id=producto.id %}{% if origen %}?next={{ origen|urlencode }}{% endif %}"
+                       class="btn btn-primary">
                         Editar
                     </a>
 
-                    <form method="post" action="{% url 'catalogo:eliminar' id=producto.id %}" class="producto-detail-delete-form">
+                    {% if user.is_superuser %}
+                    <form method="post" action="{% url 'catalogo:eliminar' id=producto.id %}"
+                        class="producto-detail-delete-form"
+                        onsubmit="confirmarEliminacion(event)">
                         {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ origen }}">
                         <button type="submit" class="btn btn-outline-danger">
                             Eliminar
                         </button>
                     </form>
+                    {% endif %}
                 </div>
             </div>
+            {% endif %}
         </div>
     </article>
 </section>
+{% if user.is_superuser %}
+    {% include 'catalogo/confirmar_eliminacion.html' %}
+{% endif %}
 {% endblock %}

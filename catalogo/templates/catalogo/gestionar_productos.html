@@ -1,0 +1,115 @@
+{% extends 'plantilla.html' %}
+
+{% block titulo %}
+    Gestionar productos - Mundo Tuerca
+{% endblock %}
+
+{% block contenido %}
+<section class="container py-4 py-lg-5 manage-products-page">
+    <header class="solicitudes-heading">
+        <div>
+            <p class="solicitudes-eyebrow">Administración</p>
+            <h1>Gestionar productos</h1>
+            <p class="solicitudes-description">Administra el catálogo, revisa la disponibilidad y actualiza las publicaciones.</p>
+        </div>
+        <a href="{% url 'catalogo:crear_producto' %}" class="btn solicitudes-catalog-link">
+            Nuevo producto
+            <span aria-hidden="true">+</span>
+        </a>
+    </header>
+
+    <section class="solicitudes-panel" aria-labelledby="manage-products-title">
+        <div class="solicitudes-panel-heading">
+            <div>
+                <h2 id="manage-products-title">Inventario de productos</h2>
+                <p>Publicaciones ordenadas desde la más reciente</p>
+            </div>
+            <span class="solicitudes-count">{{ productos|length }} productos</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle solicitudes-table manage-products-table mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col" class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <th scope="row">
+                            <div class="manage-product-info">
+                                <span class="manage-product-thumb">
+                                    {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" alt="" aria-hidden="true">
+                                    {% else %}
+                                    <span aria-hidden="true">MT</span>
+                                    {% endif %}
+                                </span>
+                                <span class="manage-product-copy">
+                                    <span class="manage-product-title">{{ producto.titulo }}</span>
+                                    <span class="manage-product-reference">Publicación #{{ producto.id }}</span>
+                                </span>
+                            </div>
+                        </th>
+                        <td class="manage-product-category">{{ producto.categoria.nombre }}</td>
+                        <td>
+                            {% if producto.estado_id == 1 %}
+                            <span class="manage-product-status manage-product-status-active">Disponible</span>
+                            {% else %}
+                            <span class="manage-product-status manage-product-status-inactive">No disponible</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-end flex-wrap gap-2 manage-product-actions">
+                                <a href="{% url 'catalogo:detalle_producto' slug=producto.slug %}?next={% url 'catalogo:gestionar' %}"
+                                   class="btn btn-sm solicitud-action manage-product-view">
+                                    Ver
+                                </a>
+                                <a href="{% url 'catalogo:editar' id=producto.id %}?next={% url 'catalogo:gestionar' %}"
+                                   class="btn btn-sm solicitud-action solicitud-action-edit">
+                                    Editar
+                                </a>
+                                {% if user.is_superuser %}
+                                <form method="post"
+                                      action="{% url 'catalogo:eliminar' id=producto.id %}"
+                                      class="m-0"
+                                      onsubmit="confirmarEliminacion(event)">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{% url 'catalogo:gestionar' %}">
+                                    <button type="submit" class="btn btn-sm solicitud-action solicitud-action-delete">
+                                        Eliminar
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="manage-products-empty-cell">
+                            <div class="manage-products-empty">
+                                <span class="manage-products-empty-mark" aria-hidden="true">MT</span>
+                                <strong>Aún no hay productos</strong>
+                                <p>Agrega la primera publicación para completar el catálogo.</p>
+                                <a href="{% url 'catalogo:crear_producto' %}" class="btn solicitudes-catalog-link">
+                                    Crear producto
+                                    <span aria-hidden="true">+</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>
+
+{% if user.is_superuser %}
+    {% include 'catalogo/confirmar_eliminacion.html' %}
+{% endif %}
+{% endblock %}

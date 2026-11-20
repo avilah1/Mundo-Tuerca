@@ -25,14 +25,31 @@
             <div class="login-form-heading">
                 <span class="login-form-kicker">Bienvenido</span>
                 <h2>Iniciar sesión</h2>
+                {% if destino %}
+                <p>Inicia sesión para continuar con tu compra.</p>
+                {% else %}
                 <p>Ingresa tus datos para continuar.</p>
+                {% endif %}
             </div>
 
             <form action="{% url 'usuarios:login' %}" method="POST">
                 {% csrf_token %}
+                {% if destino %}
+                <input type="hidden" name="next" value="{{ destino }}">
+                {% endif %}
                 {{ formulario | crispy }}
                 <button type="submit" class="btn login-submit w-100">Iniciar sesión</button>
             </form>
+
+            {% if not user.is_authenticated %}
+            <div class="login-signup-prompt">
+                <p>¿Primera vez en Mundo Tuerca?</p>
+                <a class="login-signup-link"
+                   href="{% url 'usuarios:registrar_cliente' %}{% if destino %}?next={{ destino|urlencode:"" }}{% endif %}">
+                    Crear cuenta <span aria-hidden="true">&rarr;</span>
+                </a>
+            </div>
+            {% endif %}
 
             <a class="login-back-link" href="{% url 'catalogo:catalogo' %}">
                 Volver a la tienda <span aria-hidden="true">&rarr;</span>

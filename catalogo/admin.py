@@ -1,6 +1,12 @@
 from django.contrib import admin
+
 from catalogo.models import Categoria, Producto
 
-# Register your models here.
+
 admin.site.register(Categoria)
-admin.site.register(Producto)
+
+
+@admin.register(Producto)
+class AdministracionProducto(admin.ModelAdmin):
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser and super().has_delete_permission(request, obj)

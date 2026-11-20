@@ -1,0 +1,119 @@
+{% extends "plantilla.html" %}
+
+{% block titulo %}
+    Solicitud #{{ solicitud.id }} - Mundo Tuerca
+{% endblock %}
+
+{% block contenido %}
+<section class="container py-4 py-lg-5 solicitud-detail-page">
+    <header class="solicitudes-heading">
+        <div>
+            <p class="solicitudes-eyebrow">{% if user.is_staff or user.is_superuser %}Administración{% else %}Mi cuenta{% endif %}</p>
+            <h1>Detalle de compra #{{ solicitud.id }}</h1>
+            <p class="solicitudes-description">Resumen de los productos y datos registrados en esta solicitud.</p>
+        </div>
+        <span class="solicitud-status solicitud-status-{{ solicitud.estado }} solicitud-detail-status">
+            {{ solicitud.get_estado_display }}
+        </span>
+    </header>
+
+    <dl class="solicitud-summary">
+        <div class="solicitud-summary-item">
+            <dt>Cliente</dt>
+            <dd>{{ solicitud.usuario.username }}</dd>
+        </div>
+        <div class="solicitud-summary-item">
+            <dt>Fecha de compra</dt>
+            <dd><time datetime="{{ solicitud.fecha|date:'c' }}">{{ solicitud.fecha|date:"d/m/Y, H:i" }}</time></dd>
+        </div>
+        <div class="solicitud-summary-item">
+            <dt>Productos</dt>
+            <dd>{{ detalles|length }} <span>· {{ total_unidades }} unidades</span></dd>
+        </div>
+        <div class="solicitud-summary-item solicitud-summary-total">
+            <dt>Total de la compra</dt>
+            <dd>${{ solicitud.costo_total|floatformat:"0g" }}</dd>
+        </div>
+    </dl>
+
+    <section class="solicitudes-panel solicitud-products-panel" aria-labelledby="solicitud-products-title">
+        <div class="solicitudes-panel-heading">
+            <div>
+                <h2 id="solicitud-products-title">Productos solicitados</h2>
+                <p>Detalle de cantidades y precios registrados al comprar</p>
+            </div>
+            <span class="solicitudes-count">{{ detalles|length }} productos</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle solicitudes-table solicitud-detail-table mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">Producto</th>
+                        <th scope="col" class="text-center">Unidades</th>
+                        <th scope="col" class="text-end">Precio unitario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in detalles %}
+                    <tr>
+                        <th scope="row" class="solicitud-product-name">{{ detalle.publicacion.titulo }}</th>
+                        <td class="text-center solicitud-product-quantity">{{ detalle.cantidad }}</td>
+                        <td class="text-end solicitud-product-price">
+                            {% if detalle.precio_unitario is not None %}
+                            ${{ detalle.precio_unitario|floatformat:"0g" }}
+                            {% else %}
+                            Sin registro
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="solicitud-products-empty">Esta solicitud no tiene productos.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="solicitud-detail-actions">
+        <div class="d-flex flex-wrap gap-2">
+            {% if puede_completar %}
+            <a href="{% url 'catalogo:editar_solicitud' id=solicitud.id %}"
+                class="btn solicitud-action solicitud-action-edit">
+                Editar solicitud
+            </a>
+            <form method="post" action="{% url 'catalogo:completar_solicitud' id=solicitud.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn solicitud-action solicitud-action-complete">
+                    Marcar como completada
+                </button>
+            </form>
+            {% endif %}
+            {% if puede_eliminar %}
+            <a href="{% url 'catalogo:eliminar_solicitud' id=solicitud.id %}"
+                class="btn solicitud-action solicitud-action-delete">
+                Eliminar solicitud
+            </a>
+            {% endif %}
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            {% if user.is_staff or user.is_superuser %}
+            <a href="{% url 'catalogo:gestionar_solicitudes' %}" class="btn solicitud-navigation-action">
+                Volver a solicitudes
+            </a>
+            {% else %}
+            <a href="{% url 'catalogo:mis_solicitudes' %}" class="btn solicitud-navigation-action">
+                Volver al historial
+            </a>
+            {% endif %}
+            <a href="{% url 'catalogo:catalogo' %}" class="btn solicitud-navigation-action">
+                Catálogo
+            </a>
+            <a href="{% url 'catalogo:ver_carro' %}" class="btn solicitud-navigation-action">
+                Ver carrito
+            </a>
+        </div>
+    </footer>
+</section>
+{% endblock %}

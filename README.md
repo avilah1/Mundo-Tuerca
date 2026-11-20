@@ -1,152 +1,57 @@
-# Mundo Tuerca — JavierAvilaEV3
+# Mundo Tuerca
 
-Aplicación web desarrollada con Django para registrar y consultar un catálogo de llantas, neumáticos y accesorios.
+Proyecto Django de Javier Ávila para el módulo Proyecto Integración de Programación, evaluación 3. El catálogo está organizado en llantas, neumáticos y accesorios.
 
-Estudiante: Javier Ávila  
-Módulo: Proyecto Integración de Programación — APR076  
-Evaluación: 3
+## Cómo aplicar esta actualización
 
-## Objetivo
+1. Extrae el ZIP y abre la carpeta `Mundo_Tuerca`.
+2. Copia su contenido a la carpeta de tu proyecto `JavierAvilaEV3`, donde está `manage.py`. Acepta combinar las carpetas y reemplazar los archivos con el mismo nombre.
+3. Con MariaDB ejecutándose, abre PowerShell en esa carpeta, detén el servidor de Django si está abierto y ejecuta:
 
-Centralizar la información de los productos y permitir que los visitantes consulten sus características y precios. Los usuarios autenticados pueden registrar nuevos productos.
+   ```powershell
+   .\venv\Scripts\python.exe manage.py migrate
+   .\venv\Scripts\python.exe manage.py runserver
+   ```
 
-## Funcionalidades
+4. Abre http://127.0.0.1:8000/ e inicia sesión con tu cuenta. Para gestionar el catálogo necesitas una cuenta de trabajador o administrador.
 
-- Página de inicio con productos destacados.
-- Catálogo organizado por categorías.
-- Consulta del detalle de cada producto.
-- Inicio y cierre de sesión.
-- Registro de productos para usuarios autenticados.
-- Validación del formulario en el servidor.
-- Almacenamiento en SQLite.
+## Configurar una instalación nueva
 
-## Tecnologías
-
-- Python.
-- Django.
-- SQLite.
-- HTML y CSS.
-- Bootstrap 5.
-- Django Crispy Forms y Crispy Bootstrap 5.
-- Pillow para el manejo de imágenes.
-- SweetAlert2 para los mensajes de confirmación.
-
-## Instalación y ejecución en Windows
-
-Abre una terminal dentro de la carpeta `JavierAvilaEV3`, donde se encuentra `manage.py`.
-
-### 1. Crear un entorno virtual
+Crea el entorno virtual, instala las dependencias de `requirements.txt` y configura el acceso a MariaDB en `JavierAvilaEV3/settings.py` con los datos de tu instalación. Crea la base en MariaDB antes de aplicar las migraciones.
 
 ```powershell
 py -m venv venv
-```
-
-### 2. Instalar las dependencias
-
-```powershell
 .\venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
-### 3. Aplicar las migraciones
-
-```powershell
 .\venv\Scripts\python.exe manage.py migrate
-```
-
-### 4. Ejecutar el servidor
-
-```powershell
+.\venv\Scripts\python.exe manage.py createsuperuser
 .\venv\Scripts\python.exe manage.py runserver
 ```
 
-### 5. Abrir la aplicación
+## Cómo se usa
 
-Visita esta dirección en el navegador:
+- El catálogo permite ver productos por categoría y filtrar los activos e inactivos.
+- El usuario con sesión puede agregar productos activos al carrito, cambiar cantidades de 1 a 100 por producto y quitar productos. Al confirmar se registra la solicitud de compra con el costo calculado en el servidor.
+- En **Historial de compras**, cada cliente revisa sus propias solicitudes y su costo total. Las solicitudes confirmadas aparecen en **Gestionar solicitudes**. Desde el listado o el detalle, el trabajador y el administrador pueden editar las cantidades, agregar un producto o completar una solicitud pendiente. Los productos existentes conservan su precio unitario guardado. Cada producto nuevo se agrega con el precio vigente al guardar. Solo el administrador puede eliminar una solicitud pendiente y debe confirmar la acción.
+- El trabajador y el administrador pueden crear, editar, activar y desactivar productos. El administrador también puede eliminar productos y crear cuentas.
+- Si un producto ya figura en una solicitud, se conserva en el catálogo. Puedes cambiarlo a **Inactivo** desde el formulario de edición.
 
-http://127.0.0.1:8000/
+El formulario **Crear usuario** ofrece tres perfiles. **Cliente** es una cuenta sin acceso al panel de Django. **Trabajador** puede gestionar productos desde la tienda y consultar las solicitudes de compra. **Administrador** es el superusuario y puede gestionar el catálogo, las solicitudes y las cuentas. Las cuentas existentes conservan su perfil.
 
-Para detener el servidor, presiona `Ctrl + C` en la terminal.
+## Datos principales
 
-**Nota:** se necesita conexión a internet para instalar las dependencias y cargar Bootstrap y SweetAlert2 desde sus servicios externos.
+- `Categoria` y `Estado` clasifican los productos.
+- `Producto` guarda el título, marca, descripción, características, precio e imagen. Pertenece a una categoría y a un usuario que lo registró.
+- `SolicitudCompra` guarda al usuario, la fecha, el estado y el costo total. Las compras nuevas se registran como **Pendiente**.
+- `DetalleCompra` vincula los productos a la solicitud y guarda la cantidad y el precio unitario aplicado al confirmar.
+- Las solicitudes anteriores a este cambio aparecen como **Histórica** y conservan su total. Si tienen una sola línea y el total permite obtener el precio exacto, la migración recupera ese valor. En los demás casos se muestra **Sin registro** para el precio unitario.
 
-## Datos y cuenta de prueba
+El sistema registra solicitudes de compra. El pago y el control de stock quedan fuera del alcance.
 
-La entrega incluye una base `db.sqlite3` con datos de prueba y una carpeta `media` con las imágenes utilizadas.
 
-Conserva ambos elementos para consultar los productos precargados.
+## Creación de cuentas
 
-Cuenta para comprobar el inicio de sesión y el registro de productos:
-
-- Usuario: admin
-- Contraseña: admin
-
-Estas credenciales deben corresponder a una cuenta de demostración, sin información personal.
-
-### Preparación de una base nueva
-
-Si no se utiliza la base incluida, aplica las migraciones y crea un administrador:
-
-```powershell
-.\venv\Scripts\python.exe manage.py createsuperuser
-```
-
-Con el servidor en ejecución, ingresa a:
-
-http://127.0.0.1:8000/admin/
-
-Verifica que existan las siguientes categorías, respetando sus nombres:
-
-- Llantas
-- Neumáticos
-- Accesorios
-
-Si falta alguna, agrégala desde la administración. Luego puedes iniciar sesión en la aplicación y registrar productos.
-
-## Uso de la aplicación
-
-1. Abre la página de inicio.
-2. Selecciona una categoría para consultar sus productos.
-3. Presiona **Ver detalle** para revisar un producto.
-4. Inicia sesión con la cuenta de prueba.
-5. Selecciona **Agregar producto**.
-6. Completa el formulario y guarda.
-7. Comprueba que el producto aparezca en su categoría.
-8. Cierra la sesión al terminar.
-
-## Modelo de datos
-
-- Categoria: almacena el nombre de cada categoría.
-- Producto: almacena título, marca, descripción, características, precio, imagen y slug.
-- User: representa a los usuarios del sistema.
-
-Cada producto pertenece a una categoría y está asociado al usuario que lo registró.
-
-## Validaciones y acceso
-
-- Los campos obligatorios deben completarse.
-- El precio debe ser numérico y mayor que cero.
-- La categoría seleccionada debe existir.
-- El registro de productos requiere una sesión iniciada.
-- Los formularios incorporan protección CSRF.
-- Los visitantes pueden consultar el catálogo sin iniciar sesión.
-
-## Comprobaciones básicas
-
-| Acción | Resultado esperado |
-|---|---|
-| Consultar una categoría | Se muestran sus productos. |
-| Abrir el detalle de un producto | Se muestra su información. |
-| Acceder a agregar producto sin sesión | Se redirige al inicio de sesión. |
-| Ingresar credenciales incorrectas | El formulario informa el error. |
-| Registrar un producto válido | Se guarda y aparece en su categoría. |
-| Enviar un campo obligatorio vacío | El formulario rechaza el envío. |
-| Ingresar un precio negativo o cero | Se muestra un mensaje de validación. |
-| Cerrar sesión e intentar agregar un producto | Se solicita iniciar sesión nuevamente. |
-
-Los resultados observados y las evidencias se presentan en el registro de pruebas de la entrega.
-
-## Alcance y limitaciones
-
-Esta versión permite registrar y consultar productos. No incluye carrito de compras, pagos, pedidos ni control de stock.
-
-La aplicación está preparada para una demostración local mediante el servidor de desarrollo de Django.
+- En **Iniciar sesión → Crear cuenta**, un visitante puede registrarse como cliente.
+- En un producto activo, **Comprar** lleva al inicio de sesión. Si la persona crea una cuenta primero, la tienda conserva el producto elegido y vuelve a su detalle al iniciar sesión. Desde ahí puede agregarlo al carrito y confirmar la solicitud.
+- Desde **Crear usuario**, el administrador puede elegir **Administrador**, **Trabajador** o **Cliente**.
+- El trabajador tiene bloqueado el registro de cuentas mientras usa su sesión de trabajador.
+- El registro público siempre crea cuentas de cliente. Este cambio funciona con las cuentas y tablas existentes.

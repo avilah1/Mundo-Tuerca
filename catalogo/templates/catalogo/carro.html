@@ -1,0 +1,147 @@
+{% extends "plantilla.html" %}
+
+{% block titulo %}
+  Carrito de compras - Mundo Tuerca
+{% endblock %}
+
+{% block contenido %}
+<section class="container py-4 py-lg-5 carrito-page">
+  <header class="solicitudes-heading">
+    <div>
+      <p class="solicitudes-eyebrow">Mi cuenta</p>
+      <h1>Carrito de compras</h1>
+      <p class="solicitudes-description">Revisa tus productos antes de enviar la solicitud de compra.</p>
+    </div>
+    <a href="{% url 'catalogo:catalogo' %}" class="btn solicitudes-catalog-link">
+      Seguir comprando
+      <span aria-hidden="true">&rarr;</span>
+    </a>
+  </header>
+
+  {% if items %}
+    {% if not puede_confirmar %}
+    <div class="carrito-alert" role="alert">
+      <strong>Hay productos que no están disponibles</strong>
+      <p>Quítalos del carrito para poder confirmar la solicitud.</p>
+    </div>
+    {% endif %}
+
+    <section class="solicitudes-panel carrito-panel" aria-labelledby="carrito-products-title">
+      <div class="solicitudes-panel-heading">
+        <div>
+          <h2 id="carrito-products-title">Tu selección</h2>
+          <p>Después de cambiar una cantidad, presiona “Actualizar” antes de confirmar.</p>
+        </div>
+        <span class="solicitudes-count">{{ items|length }} artículos</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle solicitudes-table carrito-table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">Producto</th>
+              <th scope="col">Unidades</th>
+              <th scope="col" class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <th scope="row">
+                <div class="carrito-product">
+                  {% if item.producto %}
+                  <span class="carrito-product-title">{{ item.producto.titulo }}</span>
+                  {% if item.disponible %}
+                  <span class="carrito-availability carrito-availability-available">Disponible</span>
+                  {% else %}
+                  <span class="carrito-availability carrito-availability-unavailable">Inactivo</span>
+                  {% endif %}
+                  {% else %}
+                  <span class="carrito-product-title">Producto #{{ item.producto_id }}</span>
+                  <span class="carrito-availability carrito-availability-removed">Eliminado del catálogo</span>
+                  {% endif %}
+                </div>
+              </th>
+              <td>
+                {% if item.disponible %}
+                <form method="post"
+                      action="{% url 'catalogo:actualizar_cantidad' id=item.producto_id %}"
+                      class="carrito-quantity-form">
+                  {% csrf_token %}
+                  <label for="cantidad-{{ item.producto_id }}" class="visually-hidden">
+                    Unidades de {{ item.producto.titulo }}
+                  </label>
+                  <input type="number"
+                         id="cantidad-{{ item.producto_id }}"
+                         name="cantidad"
+                         value="{{ item.cantidad }}"
+                         min="1"
+                         max="{{ max_unidades }}"
+                         step="1"
+                         required
+                         class="form-control form-control-sm">
+                  <button type="submit" class="btn btn-sm solicitud-action solicitud-action-detail">
+                    Actualizar
+                  </button>
+                </form>
+                {% else %}
+                <span class="carrito-quantity-static">{{ item.cantidad }} unidades</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <form method="post"
+                      action="{% url 'catalogo:quitar_del_carro' id=item.producto_id %}"
+                      class="m-0">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm solicitud-action solicitud-action-delete">
+                    Quitar
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="carrito-panel-footer">
+        <div class="carrito-summary">
+          <div class="carrito-summary-item">
+            <span>Productos distintos</span>
+            <strong>{{ items|length }}</strong>
+          </div>
+          <div class="carrito-summary-item">
+            <span>Total de unidades</span>
+            <strong>{{ total_unidades }}</strong>
+          </div>
+        </div>
+        <form method="post" action="{% url 'catalogo:confirmar_solicitud' %}" class="carrito-confirm-form">
+          {% csrf_token %}
+          <button type="submit" class="btn carrito-confirm-button"
+                  {% if not puede_confirmar %}disabled{% endif %}>
+            Confirmar solicitud
+          </button>
+        </form>
+      </div>
+    </section>
+  {% else %}
+    <div class="solicitudes-panel carrito-empty-panel">
+      <div class="carrito-empty">
+        <span class="carrito-empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <path d="M4 5h3l3.2 14.2a2 2 0 0 0 2 1.6h12.1a2 2 0 0 0 1.9-1.5L29 10H8"></path>
+            <circle cx="13" cy="25" r="1.5"></circle>
+            <circle cx="23" cy="25" r="1.5"></circle>
+          </svg>
+        </span>
+        <h2>Tu carrito está vacío</h2>
+        <p>Explora el catálogo y agrega los productos que necesitas.</p>
+        <a href="{% url 'catalogo:catalogo' %}" class="btn solicitudes-catalog-link">
+          Explorar productos
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
